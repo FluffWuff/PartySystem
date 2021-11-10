@@ -29,5 +29,6 @@ data class CommonStrings(
     val partyHelpMessage: String,
     val excludedServerList: MutableList<String>,
     val createdPartyMessage: String,
-    val notAvailableAsPartyLeaderMessage: String
+    val notAvailableAsPartyLeaderMessage: String,
+    val partyDisbandedMessage: String
 )

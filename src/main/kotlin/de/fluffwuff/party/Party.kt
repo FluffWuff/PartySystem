@@ -49,6 +49,12 @@ data class Party(var partyLeader: ProxiedPlayer, val partyMembers: MutableMap<Pr
         }
     }
 
+    fun sendPartyMessage(message: String) {
+        partyMembers.keys.forEach {
+            it.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + message))
+        }
+    }
+
 }
 
 enum class PartyRank {

@@ -38,7 +38,7 @@ class PartyCommand(val partyManager: PartyManager, name: String?) : Command(name
                     partyJump(sender)
                 }
                 "leave" -> {
-
+                    partyLeave(sender)
                 }
                 "disband" -> {
 
@@ -91,5 +91,34 @@ class PartyCommand(val partyManager: PartyManager, name: String?) : Command(name
         val party = partyManager.getParty(player)!!
         party.jumpToPartyLeader(player)
     }
+
+    private fun partyLeave(player: ProxiedPlayer) {
+        if(!partyManager.isPlayerInParty(player)) {
+            player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.notInAPartyMessage))
+            return
+        }
+        val party = partyManager.getParty(player)!!
+        if(party.partyLeader == player) {
+            partyDisband(player)
+            return
+        }
+        //write end of leave function
+    }
+
+    private fun partyDisband(player: ProxiedPlayer) {
+        if(!partyManager.isPlayerInParty(player)) {
+            player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.notInAPartyMessage))
+            return
+        }
+        val party = partyManager.getParty(player)!!
+        if(party.partyLeader != player) {
+            player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.partyHelpMessage + PartySystem.COMMON_STRINGS.notPartyLeaderMessage))
+            return
+        }
+        partyManager.deleteParty(player)
+        party.sendPartyMessage(PartySystem.COMMON_STRINGS.partyDisbandedMessage)
+
+    }
+
 
 }

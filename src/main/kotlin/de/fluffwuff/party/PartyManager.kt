@@ -58,7 +58,7 @@ class DefaultPartyManager : PartyManager {
             player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.notPartyLeaderMessage))
             return
         }
-
+        parties -= party
     }
 
     override fun transferParty(oldLeaderPlayer: ProxiedPlayer, newLeaderPlayer: ProxiedPlayer): Party? {
