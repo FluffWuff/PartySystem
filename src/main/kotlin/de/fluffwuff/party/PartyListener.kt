@@ -12,15 +12,20 @@
  *  You should have received a copy of the GNU General Public License
  *  al
  */
-package de.richtigeralex.party
+package de.fluffwuff.party
 
-data class CommonStrings(
-    val prefix: String,
-    val warpMessage: String,
-    val jumpMessage: String,
-    val jumpDisabledMessage: String,
-    val chatDisabledMessage: String,
-    val alreadyInPartyMessage: String,
-    val notInAPartyMessage: String,
-    val notPartyLeaderMessage: String
-)
+import net.md_5.bungee.api.event.ServerSwitchEvent
+import net.md_5.bungee.api.plugin.Listener
+import net.md_5.bungee.event.EventHandler
+
+class PartyListener(private val partyManager: PartyManager) : Listener {
+
+    @EventHandler
+    fun handleServerSwitch(event: ServerSwitchEvent) {
+        val party = partyManager.getParty(event.player) ?: return
+        if(event.player != party.partyLeader) return
+        if(PartySystem.COMMON_STRINGS.excludedServerList.contains(event.player.server.info.name)) return
+        party.warpToPartyLeader()
+    }
+
+}

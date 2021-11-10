@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License
  *  al
  */
-package de.richtigeralex.party
+package de.fluffwuff.party
 
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
@@ -21,12 +21,16 @@ data class Party(var partyLeader: ProxiedPlayer, val partyMembers: MutableMap<Pr
 
     fun warpToPartyLeader() {
         partyMembers.keys.forEach {
-            it.connect(partyLeader.server!!.info)
+            if(it != partyLeader) it.connect(partyLeader.server!!.info)
             it.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.warpMessage))
         }
     }
 
     fun jumpToPartyLeader(player: ProxiedPlayer) {
+        if(player == partyLeader) {
+            player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.notAvailableAsPartyLeaderMessage))
+            return
+        }
         if(!isJumpEnabled) {
             player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.jumpDisabledMessage))
             return
@@ -36,12 +40,12 @@ data class Party(var partyLeader: ProxiedPlayer, val partyMembers: MutableMap<Pr
     }
 
     fun chatParty(player: ProxiedPlayer, message: String) {
-        if(!isJumpEnabled) {
+        if(!isChatEnabled) {
             player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.chatDisabledMessage))
             return
         }
         partyMembers.keys.forEach {
-
+            //TODO write party chat message structure
         }
     }
 

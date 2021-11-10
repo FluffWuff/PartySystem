@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License
  *  al
  */
-package de.richtigeralex.party
+package de.fluffwuff.party
 
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
@@ -25,9 +25,11 @@ interface PartyManager {
 
     fun deleteParty(player: ProxiedPlayer)
 
-    fun transferParty(oldLeaderPlayer: ProxiedPlayer, newLeaderPlayer: ProxiedPlayer): Party
+    fun transferParty(oldLeaderPlayer: ProxiedPlayer, newLeaderPlayer: ProxiedPlayer): Party?
 
     fun getParty(player: ProxiedPlayer): Party?
+
+    fun isPlayerInParty(player: ProxiedPlayer): Boolean = getParty(player) != null
 
 }
 
@@ -41,6 +43,7 @@ class DefaultPartyManager : PartyManager {
             return getParty(player)!!
         }
         val party = Party(player)
+        player.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.createdPartyMessage))
         parties += party
         return party
     }
@@ -58,11 +61,26 @@ class DefaultPartyManager : PartyManager {
 
     }
 
-    override fun transferParty(oldLeaderPlayer: ProxiedPlayer, newLeaderPlayer: ProxiedPlayer): Party {
-        TODO("Not yet implemented")
+    override fun transferParty(oldLeaderPlayer: ProxiedPlayer, newLeaderPlayer: ProxiedPlayer): Party? {
+        val party = getParty(oldLeaderPlayer)
+        if (party == null) {
+            oldLeaderPlayer.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.notInAPartyMessage))
+            return null
+        }
+        if(getParty(newLeaderPlayer) == null) {
+            oldLeaderPlayer.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.otherPlayerNotInAPartyMessage))
+            return null
+        }
+        if(getParty(oldLeaderPlayer) != getParty(newLeaderPlayer)) {
+            oldLeaderPlayer.sendMessage(TextComponent(PartySystem.COMMON_STRINGS.prefix + PartySystem.COMMON_STRINGS.playerNotInYourPartyMessage))
+            return null
+        }
+        party.partyMembers.replace(oldLeaderPlayer, PartyRank.MOD)
+        party.partyMembers.replace(newLeaderPlayer, PartyRank.LEADER)
+        return party
     }
 
     override fun getParty(player: ProxiedPlayer): Party? {
-        TODO("Not yet implemented")
+        return parties.find { it.partyMembers.keys.contains(player) }
     }
 }

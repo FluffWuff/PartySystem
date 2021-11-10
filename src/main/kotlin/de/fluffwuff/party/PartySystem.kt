@@ -12,9 +12,10 @@
  *  You should have received a copy of the GNU General Public License
  *  al
  */
-package de.richtigeralex.party
+package de.fluffwuff.party
 
 import com.google.gson.GsonBuilder
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 import java.io.IOException
@@ -35,6 +36,9 @@ class PartySystem : Plugin() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+        val partyManager: PartyManager = DefaultPartyManager()
+        ProxyServer.getInstance().pluginManager.registerCommand(this, PartyCommand(partyManager, "party"))
+        ProxyServer.getInstance().pluginManager.registerListener(this, PartyListener(partyManager))
     }
 
 }
